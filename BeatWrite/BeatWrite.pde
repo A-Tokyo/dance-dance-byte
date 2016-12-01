@@ -7,78 +7,120 @@ Minim minim;
 AudioPlayer song;
 BeatDetect beat;
 BeatListener bl;
-Arduino arduino;
-
-int ledPin =  12;    // LED connected to digital pin 12
-int ledPin2 =  8;    // LED connected to digital pin 1
-int ledPin3 =  2;    // LED connected to digital pin 0
+boolean finished_playing = false;
+long count =0;
+Serial myPort;  // Create object from Serial class to make serial communication with arduino
 
 float kickSize, snareSize, hatSize;
 
 void setup() {
   size(512, 200, P3D);
-  
+
   minim = new Minim(this);
-  arduino = new Arduino(this, Arduino.list()[0], 9600);
-  
+
+  String portName = Serial.list()[0]; //change the 0 to a 1 or 2 etc. to match your port
+
+  myPort = new Serial(this, portName, 9600); // u can use myPort.write(something) to send it to arduino
+  delay(3000);
   song = minim.loadFile("complex.MP3", 2048);
   song.play();
-  // a beat detection object that is FREQ_ENERGY mode that 
-  // expects buffers the length of song's buffer size
-  // and samples captured at songs's sample rate
   beat = new BeatDetect(song.bufferSize(), song.sampleRate());
-  // set the sensitivity to 300 milliseconds
-  // After a beat has been detected, the algorithm will wait for 300 milliseconds 
-  // before allowing another beat to be reported. You can use this to dampen the 
-  // algorithm if it is giving too many false-positives. The default value is 10, 
-  // which is essentially no damping. If you try to set the sensitivity to a negative value, 
-  // an error will be reported and it will be set to 10 instead. 
-  beat.setSensitivity(100);  
+  beat.setSensitivity(20); //in milli secs  
   kickSize = snareSize = hatSize = 16;
   // make a new beat listener, so that we won't miss any buffers for the analysis
   bl = new BeatListener(beat, song);  
   textFont(createFont("Helvetica", 16));
   textAlign(CENTER);
-  
-  arduino.pinMode(ledPin, Arduino.OUTPUT);    
-  arduino.pinMode(ledPin2, Arduino.OUTPUT);  
-  arduino.pinMode(ledPin3, Arduino.OUTPUT);  
 }
 
 void draw() {
-  background(0);
-  fill(255);
-  if(beat.isKick()) {
-      arduino.digitalWrite(ledPin, Arduino.HIGH);   // set the LED on
+  if (song.isPlaying()) { 
+    background(0);
+    fill(255);
+    if (beat.isKick()) {
       kickSize = 32;
-  }
-  if(beat.isSnare()) {
-      arduino.digitalWrite(ledPin2, Arduino.HIGH);   // set the LED on
+    }
+    if (beat.isSnare()) {
       snareSize = 32;
-  }
-  if(beat.isHat()) {
-      arduino.digitalWrite(ledPin3, Arduino.HIGH);   // set the LED on
+    }
+    if (beat.isHat()) {
       hatSize = 32;
+    }
+    //---------------------------------------------------------------------------------------
+    myPort.write('a'); //valid beat
+
+    if (beat.isRange(1, 3, 1)) {
+      myPort.write(1);
+    } else {
+      myPort.write(0);
+    }
+
+    if (beat.isRange(3, 6, 1)) {
+      myPort.write(1);
+    } else {
+      myPort.write(0);
+    }
+
+    if (beat.isRange(6, 9, 1)) {
+      myPort.write(1);
+    } else {
+      myPort.write(0);
+    }
+
+    if (beat.isRange(9, 12, 1)) {
+      myPort.write(1);
+    } else {
+      myPort.write(0);
+    }
+
+    if (beat.isRange(12, 15, 1)) {
+      myPort.write(1);
+    } else {
+      myPort.write(0);
+    }
+
+    if (beat.isRange(15, 18, 1)) {
+      myPort.write(1);
+    } else {
+      myPort.write(0);
+    }
+
+    if (beat.isRange(18, 21, 1)) {
+      myPort.write(1);
+    } else {
+      myPort.write(0);
+    }
+
+    if (beat.isRange(21, 26, 1)) {
+      myPort.write(1);
+    } else {
+      myPort.write(0);
+    }
+    //-----------------------------------------------------------------------------------
+    print(beat.isRange(1, 3, 1) + " "+beat.isRange(3, 6, 1)+" "+beat.isRange(6, 9, 1)+" ");
+    print(beat.isRange(9, 12, 1) + " "+beat.isRange(12, 15, 1)+" "+beat.isRange(15, 18, 1)+" ");
+    print(beat.isRange(18, 21, 1) + " "+beat.isRange(21, 26, 1)+'\n');
+
+    //GUI stuff
+    textSize(kickSize);
+    text("KICK", width/4, height/2);
+    textSize(snareSize);
+    text("SNARE", width/2, height/2);
+    textSize(hatSize);
+    text("HAT", 3*width/4, height/2);
+    kickSize = constrain(kickSize * 0.95, 16, 32);
+    snareSize = constrain(snareSize * 0.95, 16, 32);
+    hatSize = constrain(hatSize * 0.95, 16, 32);
+  } else if (!finished_playing) {
+    print("processing is complete!");
+    myPort.write('b'); //invalid beat >>>>> indicating processing is finished
+    finished_playing = true;
   }
-  arduino.digitalWrite(ledPin, Arduino.LOW);    // set the LED off
-  arduino.digitalWrite(ledPin2, Arduino.LOW);    // set the LED off
-  arduino.digitalWrite(ledPin3, Arduino.LOW);    // set the LED off
-  textSize(kickSize);
-  text("KICK", width/4, height/2);
-  textSize(snareSize);
-  text("SNARE", width/2, height/2);
-  textSize(hatSize);
-  text("HAT", 3*width/4, height/2);
-  kickSize = constrain(kickSize * 0.95, 16, 32);
-  snareSize = constrain(snareSize * 0.95, 16, 32);
-  hatSize = constrain(hatSize * 0.95, 16, 32);
+  delay(1000);
 }
 
 void stop() {
-  // always close Minim audio classes when you are finished with them
   song.close();
-  // always stop Minim before exiting
   minim.stop();
-  // this closes the sketch
   super.stop();
 }
