@@ -22,10 +22,12 @@ void setup() {
 
   myPort = new Serial(this, portName, 9600); // u can use myPort.write(something) to send it to arduino
   delay(3000);
-  song = minim.loadFile("complex.MP3", 2048);
+  song = minim.loadFile("complex.wav", 2048);
   song.play();
   beat = new BeatDetect(song.bufferSize(), song.sampleRate());
-  beat.setSensitivity(20); //in milli secs  
+  
+  beat.setSensitivity(10); //in milli secs  
+  
   kickSize = snareSize = hatSize = 16;
   // make a new beat listener, so that we won't miss any buffers for the analysis
   bl = new BeatListener(beat, song);  
@@ -48,54 +50,39 @@ void draw() {
     }
     //---------------------------------------------------------------------------------------
     myPort.write('a'); //valid beat
+    int beat_t =0;
 
     if (beat.isRange(1, 3, 1)) {
-      myPort.write(1);
-    } else {
-      myPort.write(0);
-    }
-
+      beat_t+=1;
+    } 
     if (beat.isRange(3, 6, 1)) {
-      myPort.write(1);
-    } else {
-      myPort.write(0);
-    }
+     beat_t+=2;
+    } 
 
     if (beat.isRange(6, 9, 1)) {
-      myPort.write(1);
-    } else {
-      myPort.write(0);
-    }
+     beat_t+=4;
+    } 
 
     if (beat.isRange(9, 12, 1)) {
-      myPort.write(1);
-    } else {
-      myPort.write(0);
+      beat_t+=8;
     }
 
     if (beat.isRange(12, 15, 1)) {
-      myPort.write(1);
-    } else {
-      myPort.write(0);
-    }
+      beat_t+=16;
+    } 
 
     if (beat.isRange(15, 18, 1)) {
-      myPort.write(1);
-    } else {
-      myPort.write(0);
-    }
+      beat_t+=32;
+    } 
 
     if (beat.isRange(18, 21, 1)) {
-      myPort.write(1);
-    } else {
-      myPort.write(0);
-    }
+     beat_t+=64;
+    } 
 
     if (beat.isRange(21, 26, 1)) {
-      myPort.write(1);
-    } else {
-      myPort.write(0);
-    }
+      beat_t+=128;
+    } 
+    myPort.write(beat_t);
     //-----------------------------------------------------------------------------------
     print(beat.isRange(1, 3, 1) + " "+beat.isRange(3, 6, 1)+" "+beat.isRange(6, 9, 1)+" ");
     print(beat.isRange(9, 12, 1) + " "+beat.isRange(12, 15, 1)+" "+beat.isRange(15, 18, 1)+" ");
@@ -116,7 +103,7 @@ void draw() {
     myPort.write('b'); //invalid beat >>>>> indicating processing is finished
     finished_playing = true;
   }
-  delay(1000);
+  delay(950);
 }
 
 void stop() {
