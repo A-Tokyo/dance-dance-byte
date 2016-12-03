@@ -53,6 +53,7 @@ int game_started = false;
 volatile int game_duration = 240; //4 min game
 bool player_detected = true;
 bool processing_mode = false;  //Danger !! if true it will write to EEPROM, and we have 100,000 W/E cycles only
+bool has_pressed = false;
 int address = 0;
 int score = 0;
 
