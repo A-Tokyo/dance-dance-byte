@@ -238,30 +238,77 @@ void end_game() {
 
 }
 void button_logic(){
-  // if the button is pressed while the LED is on, increment score with 10
-  if(digitalRead(btn1) && digitalRead(pin1)){
-    score+=10;
+  if (digitalRead(btn1)){
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(pin1)){
+      score+=10;
+    }else{
+      // if the button is pressed while the LED is off, decrement score with 10
+      score-=10;
+    }
   }
-  if(digitalRead(btn2) && digitalRead(pin2)){
-    score+=10;
+  if (digitalRead(btn2)){
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(pin2)){
+      score+=10;
+    }else{
+      // if the button is pressed while the LED is off, decrement score with 10
+      score-=10;
+    }
   }
-  if(digitalRead(btn3) && digitalRead(pin3)){
-    score+=10;
+  if (digitalRead(btn3)){
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(pin3)){
+      score+=10;
+    }else{
+      // if the button is pressed while the LED is off, decrement score with 10
+      score-=10;
+    }
   }
-  if(digitalRead(btn4) && digitalRead(pin4)){
-    score+=10;
+  if (digitalRead(btn4)){
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(pin4)){
+      score+=10;
+    }else{
+      // if the button is pressed while the LED is off, decrement score with 10
+      score-=10;
+    }
   }
-  if(digitalRead(btn5) && digitalRead(pin5)){
-    score+=10;
+  if (digitalRead(btn5)){
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(pin5)){
+      score+=10;
+    }else{
+      // if the button is pressed while the LED is off, decrement score with 10
+      score-=10;
+    }
   }
-  if(digitalRead(btn6) && digitalRead(pin6)){
-    score+=10;
+  if (digitalRead(btn6)){
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(pin6)){
+      score+=10;
+    }else{
+      // if the button is pressed while the LED is off, decrement score with 10
+      score-=10;
+    }
   }
-  if(digitalRead(btn7) && digitalRead(pin7)){
-    score+=10;
+  if (digitalRead(btn7)){
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(pin7)){
+      score+=10;
+    }else{
+      // if the button is pressed while the LED is off, decrement score with 10
+      score-=10;
+    }
   }
-  if(digitalRead(btn8) && digitalRead(pin8)){
-    score+=10;
+  if (digitalRead(btn8)){
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(pin8)){
+      score+=10;
+    }else{
+      // if the button is pressed while the LED is off, decrement score with 10
+      score-=10;
+    }
   }
 }
 void turn_on() {
