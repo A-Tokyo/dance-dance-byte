@@ -17,7 +17,7 @@
 #define led6 48
 #define led7 47
 #define led8 46
-#define led9 45  //game status 
+#define led9 45  //game status
 
 //buttons pins
 #define btn1 44
@@ -191,6 +191,7 @@ void loop() {
 
     if (game_duration > 0) {
       turn_on();
+      button_logic();
       delay(2000); // on for about 2 sec
       turn_off();// off for about 3 sec
       delay(2000);
@@ -235,6 +236,9 @@ void end_game() {
   delay(100);
 
 }
+void button_logic(){
+  
+}
 void turn_on() {
   int beat = EEPROM.read(address);
 
@@ -275,7 +279,7 @@ void turn_off() {
   digitalWrite(led6, LOW);
   digitalWrite(led7, LOW);
   digitalWrite(led8, LOW);
- 
+
 }
 void duration() {
   if (game_duration >= 0) {
