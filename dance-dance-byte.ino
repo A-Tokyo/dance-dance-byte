@@ -21,7 +21,7 @@
 
 //buttons pins
 #define btn1 44
-#define bnt2 43
+#define btn2 43
 #define btn3 42
 #define btn4 41
 #define btn5 40
@@ -56,6 +56,8 @@ bool processing_mode = false;  //Danger !! if true it will write to EEPROM, and 
 bool has_pressed = false;
 int address = 0;
 int score = 0;
+
+bool btn_status[] = {false, false, false, false, false, false, false, false}; //initially not pressed
 
 void setup() {
   //wave shield settings
@@ -93,7 +95,7 @@ void setup() {
   pinMode(led8, OUTPUT);
   pinMode(led9, OUTPUT);
 
-   //btns settings
+  //btns settings
   pinMode(btn1, INPUT_PULLUP);
   pinMode(btn2, INPUT_PULLUP);
   pinMode(btn3, INPUT_PULLUP);
@@ -190,13 +192,25 @@ void loop() {
   }
   else { //game logic
 
-    if (game_duration > 0) {
-      turn_on();
+    if ( game_duration > 0) {
+      if ((240 - game_duration) % 4 == 0) {
+        if ( digitalRead(btn1) ) {
+          for (int i = 0; i < 8; i++)
+            btn_status[i] = false;
+        }
+        turn_on();
+
+      }
+
+
       button_logic();
-      delay(2000); // on for about 2 sec
-      turn_off();// off for about 3 sec
-      decrement_score_if_unpressed();
-      delay(2000);
+
+
+      if ((240 - game_duration) % 4 == 2)
+        turn_off();// off for about 3 sec
+
+      //decrement_score_if_unpressed();
+
       address += 4; //to sync the leds with the song
     }
     else {
@@ -241,95 +255,109 @@ void end_game() {
 // This one is responsible of setting the new score according to the buttons pressed
 // if the button is pressed while the LED is on, it increments score with 10 and the has_pressed variable is set tp true
 // if the button is pressed while the LED is off, it decrements score with 10 and the has_pressed variable is set tp true
-void button_logic(){
-  if (digitalRead(btn1)){
+void button_logic() {
+
+  if (!digitalRead(btn1) && !btn_status[0]) {
     // if the button is pressed while the LED is on, increment score with 10
-    if (digitalRead(led1)){
+    if (digitalRead(led1)) {
       increment_score_pressed();
-    }else{
+    } else {
+      // if the button is pressed while the LED is off, decrement score with 10
+      decrement_score_pressed();
+    }
+    btn_status[0] = true;
+  }
+  if (!digitalRead(btn2) && !btn_status[1]) {
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(led2) ) {
+      increment_score_pressed();
+    } else {
+      // if the button is pressed while the LED is off, decrement score with 10
+      decrement_score_pressed();
+    }
+    btn_status[1] = true;
+  }
+  if (!digitalRead(btn3) && !btn_status[2]) {
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(led3)) {
+      increment_score_pressed();
+    } else {
+      // if the button is pressed while the LED is off, decrement score with 10
+      decrement_score_pressed();
+    }
+    btn_status[2] = true;
+  }
+  if (!digitalRead(btn4) && !btn_status[3]) {
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(led4)) {
+      increment_score_pressed();
+    } else {
+      // if the button is pressed while the LED is off, decrement score with 10
+      decrement_score_pressed();
+    }
+    btn_status[3] = true;
+  }
+  if (!digitalRead(btn5) && !btn_status[4]) {
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(led5)) {
+      increment_score_pressed();
+    } else {
+      // if the button is pressed while the LED is off, decrement score with 10
+      decrement_score_pressed();
+    }
+    btn_status[4] = true;
+  }
+  if (!digitalRead(btn6) && !btn_status[5]) {
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(led6)) {
+      increment_score_pressed();
+    } else {
+      // if the button is pressed while the LED is off, decrement score with 10
+      decrement_score_pressed();
+    }
+    btn_status[5] = true;
+  }
+  if (!digitalRead(btn7) && !btn_status[6]) {
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(led7) ) {
+      increment_score_pressed();
+    } else {
+      // if the button is pressed while the LED is off, decrement score with 10
+      decrement_score_pressed();
+    }
+    btn_status[6] = true;
+  }
+  if (!digitalRead(btn8) && !btn_status[7]) {
+    // if the button is pressed while the LED is on, increment score with 10
+    if (digitalRead(led8)) {
+      increment_score_pressed();
+    } else {
       // if the button is pressed while the LED is off, decrement score with 10
       decrement_score_pressed();
     }
   }
-  if (digitalRead(btn2)){
-    // if the button is pressed while the LED is on, increment score with 10
-    if (digitalRead(led2)){
-      increment_score_pressed();
-    }else{
-      // if the button is pressed while the LED is off, decrement score with 10
-      decrement_score_pressed();
-    }
-  }
-  if (digitalRead(btn3)){
-    // if the button is pressed while the LED is on, increment score with 10
-    if (digitalRead(led3)){
-      increment_score_pressed();
-    }else{
-      // if the button is pressed while the LED is off, decrement score with 10
-      decrement_score_pressed();
-    }
-  }
-  if (digitalRead(btn4)){
-    // if the button is pressed while the LED is on, increment score with 10
-    if (digitalRead(led4)){
-      increment_score_pressed();
-    }else{
-      // if the button is pressed while the LED is off, decrement score with 10
-      decrement_score_pressed();
-    }
-  }
-  if (digitalRead(btn5)){
-    // if the button is pressed while the LED is on, increment score with 10
-    if (digitalRead(led5)){
-      increment_score_pressed();
-    }else{
-      // if the button is pressed while the LED is off, decrement score with 10
-      decrement_score_pressed();
-    }
-  }
-  if (digitalRead(btn6)){
-    // if the button is pressed while the LED is on, increment score with 10
-    if (digitalRead(led6)){
-      increment_score_pressed();
-    }else{
-      // if the button is pressed while the LED is off, decrement score with 10
-      decrement_score_pressed();
-    }
-  }
-  if (digitalRead(btn7)){
-    // if the button is pressed while the LED is on, increment score with 10
-    if (digitalRead(led7)){
-      increment_score_pressed();
-    }else{
-      // if the button is pressed while the LED is off, decrement score with 10
-      decrement_score_pressed();
-    }
-  }
-  if (digitalRead(btn8)){
-    // if the button is pressed while the LED is on, increment score with 10
-    if (digitalRead(led8)){
-      increment_score_pressed();
-    }else{
-      // if the button is pressed while the LED is off, decrement score with 10
-      decrement_score_pressed();
-    }
-  }
+  btn_status[7] = true;
 }
 // This one increments the score with 10 and sets the has_pressed variable to true
-void increment_score_pressed(){
-  score+=10;
+void increment_score_pressed() {
+  score += 10;
+  print_status();
   has_pressed = true;
 }
 // This one decrements the score with 10 and sets the has_pressed variable to true
-void decrement_score_pressed(){
-  score-=10;
+void decrement_score_pressed() {
+  if (score - 10 >= 0) {
+    score -= 10;
+    print_status();
+  }
   has_pressed = true;
 }
 // This one decrements the score with 5 if has_pressed variable is false and resets the has_pressed variable to false anyway
-void decrement_score_if_unpressed(){
-  if (!has_pressed){
+void decrement_score_if_unpressed() {
+  if (!has_pressed) {
     // decrement score with 5
-    score-=5;
+    score -= 5;
+    print_status();
   }
   // reset has_pressed
   has_pressed = false;
@@ -378,14 +406,18 @@ void turn_off() {
 }
 void duration() {
   if (game_duration >= 0) {
-    lcd.clear();
-    lcd.print("TIME: ");
-    lcd.print(game_duration);
-    lcd.setCursor(0, 1); //(col,row)
-    lcd.print("SCORE: ");
-    lcd.print(score);
+    print_status();
   }
   game_duration--;
+}
+
+void print_status() {
+  lcd.clear();
+  lcd.print("TIME: ");
+  lcd.print(game_duration);
+  lcd.setCursor(0, 1); //(col,row)
+  lcd.print("SCORE: ");
+  lcd.print(score);
 }
 void send(int data)
 {
