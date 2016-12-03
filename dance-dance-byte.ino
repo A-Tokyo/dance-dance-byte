@@ -311,6 +311,14 @@ void button_logic(){
     }
   }
 }
+void increment_score_pressed(){
+  score+=10;
+  has_pressed = true;
+}
+void decrement_score_pressed(){
+  score-=10;
+  has_pressed = true;
+}
 void turn_on() {
   int beat = EEPROM.read(address);
 
