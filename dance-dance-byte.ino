@@ -238,6 +238,9 @@ void end_game() {
   delay(100);
 
 }
+// This one is responsible of setting the new score according to the buttons pressed
+// if the button is pressed while the LED is on, it increments score with 10 and the has_pressed variable is set tp true
+// if the button is pressed while the LED is off, it decrements score with 10 and the has_pressed variable is set tp true
 void button_logic(){
   if (digitalRead(btn1)){
     // if the button is pressed while the LED is on, increment score with 10
@@ -312,21 +315,24 @@ void button_logic(){
     }
   }
 }
+// This one increments the score with 10 and sets the has_pressed variable to true
 void increment_score_pressed(){
   score+=10;
   has_pressed = true;
 }
+// This one decrements the score with 10 and sets the has_pressed variable to true
 void decrement_score_pressed(){
   score-=10;
   has_pressed = true;
 }
+// This one decrements the score with 5 if has_pressed variable is false and resets the has_pressed variable to false anyway
 void decrement_score_if_unpressed(){
   if (!has_pressed){
     // decrement score with 5
     score-=5;
-    // reset has_pressed
-    has_pressed = false;
   }
+  // reset has_pressed
+  has_pressed = false;
 }
 void turn_on() {
   int beat = EEPROM.read(address);
