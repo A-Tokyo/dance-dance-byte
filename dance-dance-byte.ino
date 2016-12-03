@@ -195,6 +195,7 @@ void loop() {
       button_logic();
       delay(2000); // on for about 2 sec
       turn_off();// off for about 3 sec
+      decrement_score_if_unpressed();
       delay(2000);
       address += 4; //to sync the leds with the song
     }
@@ -318,6 +319,14 @@ void increment_score_pressed(){
 void decrement_score_pressed(){
   score-=10;
   has_pressed = true;
+}
+void decrement_score_if_unpressed(){
+  if (!has_pressed){
+    // decrement score with 5
+    score-=5;
+    // reset has_pressed
+    has_pressed = false;
+  }
 }
 void turn_on() {
   int beat = EEPROM.read(address);
