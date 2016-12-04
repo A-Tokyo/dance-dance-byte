@@ -5,19 +5,19 @@
 #define DAT  9
 
 //ultrasonic pins
-#define trigPin 23
-#define echoPin 22
+#define trigPin 31
+#define echoPin 30
 
 //leds pins
 #define led1 53
 #define led2 52
 #define led3 51
 #define led4 50
-#define led5 49
-#define led6 48
-#define led7 47
-#define led8 46
-#define led9 45  //game status
+#define led9 49  //game status
+#define led5 48
+#define led6 47
+#define led7 46
+#define led8 45
 
 //buttons pins
 #define btn1 44
@@ -51,7 +51,7 @@ LiquidCrystal lcd(27, 26, 22, 23, 24, 25);
 
 int game_started = false;
 volatile int game_duration = 240; //4 min game
-bool player_detected = true;
+bool player_detected = false;
 bool processing_mode = false;  //Danger !! if true it will write to EEPROM, and we have 100,000 W/E cycles only
 bool has_pressed = false;
 int address = 0;
@@ -157,7 +157,11 @@ void loop() {
     digitalWrite(trigPin, LOW);
     duration = pulseIn(echoPin, HIGH);
     distance = (duration / 2) / 29.1;
-    if (distance > 40 && distance < 60) {
+    lcd.clear();
+    lcd.print("Distance: ");
+    lcd.setCursor(0, 1); //(col,row)
+    lcd.print(distance);
+    if (distance > 5 && distance < 10) {
       lcd.clear();
       lcd.print("want to play?");
       delay(1000);
@@ -197,21 +201,16 @@ void loop() {
     if ( game_duration > 0) {
 
       if (change_address_eeprom_0 && (240 - game_duration) % 4 == 0) {
-        if ( digitalRead(btn1) ) {
-          for (int i = 0; i < 8; i++)
-            btn_status[i] = false;
-        }
         turn_on();
         address += 4; //to sync the leds with the song
         change_address_eeprom_0 = false;
 
       }
+
       button_logic();
+
       if ( (240 - game_duration) % 4 == 2)
         turn_off();// off for about 3 sec
-
-      //decrement_score_if_unpressed();
-
     }
     else {
       end_game();
@@ -223,6 +222,7 @@ void loop() {
 
       lcd.clear();
       lcd.print("Final score is: ");
+      lcd.setCursor(0, 1); //(col,row)
       lcd.print(score);
       delay(6000);
 
@@ -231,6 +231,7 @@ void loop() {
     }
   }
 }
+
 void end_game() {
   digitalWrite(led9, LOW);
 
@@ -266,6 +267,8 @@ void button_logic() {
       decrement_score_pressed();
     }
     btn_status[0] = true;
+  } else if ( digitalRead(btn1) && btn_status[0] ) {
+    btn_status[0] = false;
   }
   if (!digitalRead(btn2) && !btn_status[1]) {
     // if the button is pressed while the LED is on, increment score with 10
@@ -276,6 +279,8 @@ void button_logic() {
       decrement_score_pressed();
     }
     btn_status[1] = true;
+  } else if ( digitalRead(btn2) && btn_status[1] ) {
+    btn_status[1] = false;
   }
   if (!digitalRead(btn3) && !btn_status[2]) {
     // if the button is pressed while the LED is on, increment score with 10
@@ -286,6 +291,8 @@ void button_logic() {
       decrement_score_pressed();
     }
     btn_status[2] = true;
+  } else if ( digitalRead(btn3) && btn_status[2] ) {
+    btn_status[2] = false;
   }
   if (!digitalRead(btn4) && !btn_status[3]) {
     // if the button is pressed while the LED is on, increment score with 10
@@ -296,6 +303,8 @@ void button_logic() {
       decrement_score_pressed();
     }
     btn_status[3] = true;
+  } else if ( digitalRead(btn4) && btn_status[3] ) {
+    btn_status[3] = false;
   }
   if (!digitalRead(btn5) && !btn_status[4]) {
     // if the button is pressed while the LED is on, increment score with 10
@@ -306,6 +315,8 @@ void button_logic() {
       decrement_score_pressed();
     }
     btn_status[4] = true;
+  } else if ( digitalRead(btn5) && btn_status[4] ) {
+    btn_status[4] = false;
   }
   if (!digitalRead(btn6) && !btn_status[5]) {
     // if the button is pressed while the LED is on, increment score with 10
@@ -316,6 +327,8 @@ void button_logic() {
       decrement_score_pressed();
     }
     btn_status[5] = true;
+  } else if ( digitalRead(btn6) && btn_status[5] ) {
+    btn_status[5] = false;
   }
   if (!digitalRead(btn7) && !btn_status[6]) {
     // if the button is pressed while the LED is on, increment score with 10
@@ -326,6 +339,8 @@ void button_logic() {
       decrement_score_pressed();
     }
     btn_status[6] = true;
+  } else if ( digitalRead(btn7) && btn_status[6] ) {
+    btn_status[6] = false;
   }
   if (!digitalRead(btn8) && !btn_status[7]) {
     // if the button is pressed while the LED is on, increment score with 10
@@ -335,8 +350,11 @@ void button_logic() {
       // if the button is pressed while the LED is off, decrement score with 10
       decrement_score_pressed();
     }
+    btn_status[7] = true;
+  } else if ( digitalRead(btn8) && btn_status[7] ) {
+    btn_status[7] = false;
   }
-  btn_status[7] = true;
+
 }
 // This one increments the score with 10 and sets the has_pressed variable to true
 void increment_score_pressed() {
@@ -362,6 +380,7 @@ void decrement_score_if_unpressed() {
   // reset has_pressed
   has_pressed = false;
 }
+
 void turn_on() {
   int beat = EEPROM.read(address);
   Serial.println(beat);
@@ -392,6 +411,7 @@ void turn_on() {
     digitalWrite(led8, HIGH);
   }
 }
+
 void turn_off() {
 
   //turn off all leds
@@ -426,6 +446,7 @@ void print_status() {
   lcd.print("SCORE: ");
   lcd.print(score);
 }
+
 void send(int data)
 {
   digitalWrite(CLK, LOW);
