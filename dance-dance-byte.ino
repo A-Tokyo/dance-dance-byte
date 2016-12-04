@@ -56,6 +56,8 @@ bool processing_mode = false;  //Danger !! if true it will write to EEPROM, and 
 bool has_pressed = false;
 int address = 0;
 int score = 0;
+volatile bool change_address_eeprom_0 = true;
+volatile bool change_address_eeprom_2 = true;
 
 bool btn_status[] = {false, false, false, false, false, false, false, false}; //initially not pressed
 
@@ -193,25 +195,23 @@ void loop() {
   else { //game logic
 
     if ( game_duration > 0) {
-      if ((240 - game_duration) % 4 == 0) {
+
+      if (change_address_eeprom_0 && (240 - game_duration) % 4 == 0) {
         if ( digitalRead(btn1) ) {
           for (int i = 0; i < 8; i++)
             btn_status[i] = false;
         }
         turn_on();
+        address += 4; //to sync the leds with the song
+        change_address_eeprom_0 = false;
 
       }
-
-
       button_logic();
-
-
-      if ((240 - game_duration) % 4 == 2)
+      if ( (240 - game_duration) % 4 == 2)
         turn_off();// off for about 3 sec
 
       //decrement_score_if_unpressed();
 
-      address += 4; //to sync the leds with the song
     }
     else {
       end_game();
@@ -364,6 +364,7 @@ void decrement_score_if_unpressed() {
 }
 void turn_on() {
   int beat = EEPROM.read(address);
+  Serial.println(beat);
 
   //turn on some leds
   if (beat & (1 << 0)) {
@@ -407,6 +408,12 @@ void turn_off() {
 void duration() {
   if (game_duration >= 0) {
     print_status();
+  }
+  if ((240 - game_duration) % 4 == 0) {
+    change_address_eeprom_0 = true;
+  }
+  else if ((240 - game_duration) % 4 == 2) {
+    change_address_eeprom_2 = true;
   }
   game_duration--;
 }
